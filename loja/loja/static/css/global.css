@@ -1,6 +1,6 @@
 #content{min-height: calc(100vh - 112px);}
-.image-circle
-    {width: 150px;
+.image-circle{
+    width: 150px;
     height: 150px;
     border-radius: 100%;
     margin: 10px auto;
