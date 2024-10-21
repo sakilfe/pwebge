@@ -34,7 +34,7 @@ def edit_usuario_view(request):
     userForm = UserForm(instance=request.user)
     context = {
         'usuarioForm': usuarioForm,
-        'userForm': userForm
+        'userForm': userForm,
         'message': message
     }
     return render(request, template_name='usuario/usuario-edit.html', context=context,status=200)
