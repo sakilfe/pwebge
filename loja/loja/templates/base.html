@@ -20,7 +20,7 @@
                 <li class="nav-item"><a class="nav-link" href="/fabricante"><i class="fa fa-book">Fabricante</i></a></li>
                 <li class="nav-item"><a class="nav-link" href="/produto"><i class="fa fa-book">Produto</i></a></li>
                 {% if user.is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href={% url 'usuario' %}><i class="fa fa-user"></i> Usuários</a></li>
+                <li class="nav-item"><a class="nav-link" href={% url 'usuario' %}><i class="fa fa-user"></i> Usuário</a></li>
                 <li class="nav-item"><a class="nav-link" href={% url 'edit_usuario' %}><i class="fa fa-edit"></i> Editar Perfil</a></li>
                 <li class="nav-item"><a class="nav-link" href={% url 'logout' %}><i class="fa fa-sign-out"></i> Sair</a></li>
                 {% else %}
