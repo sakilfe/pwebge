@@ -14,27 +14,44 @@ def create_carrinhoitem_view(request, produto_id=None):
             print (carrinho)
             print ('carrinho1: ' + str(carrinho.id))
             hoje = datetime.today().date()
-        if carrinho.criado_em.date() != hoje:
+            if carrinho.criado_em.date() != hoje:
+                carrinho = Carrinho.objects.create()
+                request.session['carrinho_id'] = carrinho.id
+                print ('novo carrinho: ' + str(carrinho.id))
+        else:
             carrinho = Carrinho.objects.create()
             request.session['carrinho_id'] = carrinho.id
-            print ('novo carrinho: ' + str(carrinho.id))
-    else:
-        carrinho = Carrinho.objects.create()
-        request.session['carrinho_id'] = carrinho.id
-        print ('carrinho2: ' + str(carrinho.id))
-    carrinho_item = CarrinhoItem.objects.filter(carrinho=carrinho, produto=produto).first()
-    if carrinho_item:
-        carrinho_item.quantidade += 1
-        print ('item de carrinho: Acrescentou 1 item do produto ' +
-        str(carrinho_item.id))
-    else:
-        carrinho_item = CarrinhoItem.objects.create(
-        carrinho=carrinho,
-        produto=produto,
-        quantidade=1,
-        preco=produto.preco
-        )
-        print ('item de carrinho: Acrescentou o produto ' + str(carrinho_item.id))
-    carrinho_item.save()
-    print ('item de carrinho salvo: ' + str(carrinho_item.id))
-    return redirect('/carrinho')
+            print ('carrinho2: ' + str(carrinho.id))
+            carrinho_item = CarrinhoItem.objects.filter(carrinho=carrinho, produto=produto).first()
+        if carrinho_item:
+            carrinho_item.quantidade += 1
+            print ('item de carrinho: Acrescentou 1 item do produto ' + str(carrinho_item.id))
+        else:
+            carrinho_item = CarrinhoItem.objects.create(
+            carrinho=carrinho,
+            produto=produto,
+            quantidade=1,
+            preco=produto.preco
+            )
+            print ('item de carrinho: Acrescentou o produto ' + str(carrinho_item.id))
+        carrinho_item.save()
+        print ('item de carrinho salvo: ' + str(carrinho_item.id))
+        return redirect('/carrinho')
+
+def list_carrinho_view(request):
+    print ('list_carrinho_view')
+    carrinho = None
+    carrinho_item = None
+    carrinho_id = request.session.get('carrinho_id')
+    if carrinho_id:
+        print ('carrinho: ' + str(carrinho_id))
+        carrinho = Carrinho.objects.filter(id=carrinho_id).first()
+        print ('Data do carrinho' + str(carrinho.criado_em))
+        carrinho_item = CarrinhoItem.objects.filter(carrinho_id=carrinho_id)
+        if carrinho_item:
+            print('itens de carrinho encontrado: ' + str(carrinho_item))
+    context = {
+        'carrinho': carrinho,
+        'itens': carrinho_item
+    }
+    return render(request, 'carrinho/carrinho-listar.html', context=context)
