@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from loja.models import Produto, Carrinho, CarrinhoItem
+from loja.models import Produto, Carrinho, CarrinhoItem, Usuario
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
 def create_carrinhoitem_view(request, produto_id=None):
     print ('create_carrinhoitem_view')
     produto = get_object_or_404(Produto, pk=produto_id)
@@ -22,7 +25,7 @@ def create_carrinhoitem_view(request, produto_id=None):
             carrinho = Carrinho.objects.create()
             request.session['carrinho_id'] = carrinho.id
             print ('carrinho2: ' + str(carrinho.id))
-            carrinho_item = CarrinhoItem.objects.filter(carrinho=carrinho, produto=produto).first()
+        carrinho_item = CarrinhoItem.objects.filter(carrinho=carrinho, produto=produto).first()
         if carrinho_item:
             carrinho_item.quantidade += 1
             print ('item de carrinho: Acrescentou 1 item do produto ' + str(carrinho_item.id))
@@ -55,3 +58,33 @@ def list_carrinho_view(request):
         'itens': carrinho_item
     }
     return render(request, 'carrinho/carrinho-listar.html', context=context)
+
+@login_required
+def confirmar_carrinho_view(request):
+    print ('confirmar_carrinho_view')
+    carrinho = None
+    carrinho_id = request.session.get('carrinho_id')
+    if carrinho_id:
+        print ('carrinho: ' + str(carrinho_id))
+        carrinho = Carrinho.objects.filter(id=carrinho_id).first()
+        usuario = get_object_or_404(Usuario, user=request.user)
+        print ('Usuario: ' + str(usuario))
+        if usuario:
+            carrinho.user_id = usuario.id
+            carrinho.situacao = 1
+            carrinho.confirmado_em = timezone.make_aware(datetime.today())
+            carrinho.save()
+            print ('carrinho salvo')
+
+            request.session.pop('carrinho.id', None)
+    context = {
+    'carrinho': carrinho
+    }
+    return render(request, 'carrinho/carrinho-confirmado.html', context=context)
+
+def remover_item_view(request, item_id):
+    item = get_object_or_404(CarrinhoItem, id=item_id)
+    carrinho_id = request.session.get('carrinho_id')
+    if carrinho_id == item.carrinho.id:
+        item.delete()
+    return redirect('/carrinho')
