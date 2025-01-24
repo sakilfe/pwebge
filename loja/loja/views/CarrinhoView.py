@@ -82,6 +82,24 @@ def confirmar_carrinho_view(request):
     }
     return render(request, 'carrinho/carrinho-confirmado.html', context=context)
 
+def incrementar_item_view(request, item_id):
+    item = get_object_or_404(CarrinhoItem, id=item_id)
+    carrinho_id = request.session.get('carrinho_id')
+    if carrinho_id == item.carrinho.id:
+        item.quantidade += 1
+        item.save()
+    return redirect('/carrinho')
+
+def decrementar_item_view(request, item_id):
+    item = get_object_or_404(CarrinhoItem, id=item_id)
+    carrinho_id = request.session.get('carrinho_id')
+    if carrinho_id == item.carrinho.id and item.quantidade > 1:
+        item.quantidade -= 1
+        item.save()
+    elif item.quantidade == 1:
+        item.delete()
+    return redirect('/carrinho')
+
 def remover_item_view(request, item_id):
     item = get_object_or_404(CarrinhoItem, id=item_id)
     carrinho_id = request.session.get('carrinho_id')

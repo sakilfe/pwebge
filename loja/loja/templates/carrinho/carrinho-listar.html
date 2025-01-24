@@ -18,7 +18,17 @@
             {% for item in itens %}
                 <div class="row">
                     <a class="col-md-4"> {{ item.produto.Produto }}</a>
-                    <a class="col-md-2"> {{ item.quantidade }}</a>
+                    <a class="col-md-2" id="menosemais">
+                        <form method="POST" action="{% url 'decrementar_item' item.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-secondary btn-sm" id="ehmenos">-</button>
+                        </form>
+                        {{ item.quantidade }}
+                        <form method="POST" action="{% url 'incrementar_item' item.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-secondary btn-sm" id="ehmais">+</button>
+                        </form>
+                    </a>
                     <a class="col-md-2">R$ {{ item.preco|floatformat:2 }}</a>
                     <a class="col-md-2">R$ {{ item.total }}</a>
                     <a class="col-md-2"><form method="POST" action="{% url 'remover_carrinhoitem' item.id%}" style="display:inline;"> {% csrf_token %} <button type="submit" class="btn btn-danger">Excluir</button></form></a>

@@ -7,3 +7,14 @@ body{
 #content form button{
     width: 100%;
 }
+#menosemais{
+    display: inline;
+}
+#ehmenos{
+    max-width: 2em;
+    max-height: 2em;
+}
+#ehmais{
+    max-width: 2em;
+    max-height: 2em;
+}
